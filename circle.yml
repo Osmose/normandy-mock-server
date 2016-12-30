@@ -1,0 +1,29 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  pre:
+    - sudo pip install docker-compose
+
+test:
+  pre:
+    - chmod -R 777 $CIRCLE_TEST_REPORTS
+  override:
+
+# appropriately tag and push the container to dockerhub
+deployment:
+  latest:
+    branch: master
+    commands:
+      # set DOCKER_DEPLOY=true in Circle UI to do deploys
+      - "${DOCKER_DEPLOY:-false}"
+      - bin/ci/deploy-dockerhub.sh latest
+
+  tags:
+    # push all tags
+    tag: /.*/
+    commands:
+      # set DOCKER_DEPLOY=true in Circle UI to do deploys
+      - "${DOCKER_DEPLOY:-false}"
+      - bin/ci/deploy-dockerhub.sh "$CIRCLE_TAG"

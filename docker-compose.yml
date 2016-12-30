@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  testgen:
+    image: normandy:testgen
+    links:
+      - database
+      - autograph
+      - proxy
+    environment:
+      DATABASE_URL: "postgres://postgres@database/postgres"
+      DJANGO_CONFIGURATION: ProductionInsecure
+      DJANGO_AUTOGRAPH_URL: http://autograph:8000/
+      DJANGO_AUTOGRAPH_HAWK_ID: normandev
+      DJANGO_AUTOGRAPH_HAWK_SECRET_KEY: 3dhoaupudifjjvm7xznd9bn73159xn3xwr77b61kzdjwzzsjts
+      DJANGO_CAN_EDIT_ACTIONS_IN_USE: "true"
+    stop_signal: SIGKILL
+    entrypoint: /mock-server/bin/update-server.sh
+    volumes:
+      - .:/mock-server
